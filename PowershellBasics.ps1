@@ -1,40 +1,58 @@
-﻿#(Get-NetIPAddress -AddressFamily IPv4 |where {$_.InterfaceAlias -ilike "Ethernet0"}).IPAddress
+﻿#1
 
-#(Get-NetIpAddress -AddressFamily IPv4 | where {$_.InterfaceAlias -ilike "Ethernet0"}).PrefixLength
+(Get-NetIPAddress -AddressFamily IPv4 |where {$_.InterfaceAlias -ilike "Ethernet0"}).IPAddress
 
-#Get-WmiObject -List | Where-Object { $_.Name -ilike "Win32_net*" } | Sort-Object
+#2
 
-#Get-CimInstance Win32_NetworkAdapterConfiguration -Filter "DHCPEnabled=true" `
-#| Select DHCPServer | Format-Table -HideTableHeaders
+(Get-NetIpAddress -AddressFamily IPv4 | where {$_.InterfaceAlias -ilike "Ethernet0"}).PrefixLength
 
-#(Get-DnsClientServerAddress -AddressFamily IPv4 | `
-#Where-Object {$_.InterfaceAlias -ilike "Ethernet0"}).ServerAddresses[0]
+#3 and 4
 
-#cd $PSScriptRoot
+Get-WmiObject -List | Where-Object { $_.Name -ilike "Win32_net*" } | Sort-Object
 
-#$files=(Get-ChildItem)
-#for ($j=0; $j -le $files.Count; $j++){
-#    if($files[$j].Extension -ilike "*ps1"){
-#        Write-Host $files[$j].Name
-#        }
-#}
+#5 and 6
 
-#$folderpath="$PSScriptRoot\outfolder"
-#if(Test-Path $folderpath){
-#    Write-Host "FolderAlreadyExists"
-#}
-#else{
-#    New-Item -Itemtype "directory" -Path $folderpath
-#}
+Get-CimInstance Win32_NetworkAdapterConfiguration -Filter "DHCPEnabled=true" `
+| Select DHCPServer | Format-Table -HideTableHeaders
 
-#cd $PSScriptRoot
-#$files=(Get-ChildItem)
+#7
 
-#$folderpath = "$PSScriptRoot/outfolder/"
-#$filepath = Join-Path -Path $folderpath "out.csv"
+(Get-DnsClientServerAddress -AddressFamily IPv4 | `
+Where-Object {$_.InterfaceAlias -ilike "Ethernet0"}).ServerAddresses[0]
 
-#$files | Where-Object { $_.extension -eq ".ps1" } | Export-Csv -Path $filepath
+#8
+
+cd $PSScriptRoot
+
+$files=(Get-ChildItem)
+for ($j=0; $j -le $files.Count; $j++){
+    if($files[$j].Extension -ilike "*ps1"){
+        Write-Host $files[$j].Name
+        }
+}
+
+#9
+
+$folderpath="$PSScriptRoot\outfolder"
+if(Test-Path $folderpath){
+    Write-Host "FolderAlreadyExists"
+}
+else{
+    New-Item -Itemtype "directory" -Path $folderpath
+}
+
+#10
+
+cd $PSScriptRoot
+$files=(Get-ChildItem)
+
+$folderpath = "$PSScriptRoot/outfolder/"
+$filepath = Join-Path -Path $folderpath "out.csv"
+
+$files | Where-Object { $_.extension -eq ".ps1" } | Export-Csv -Path $filepath
+
+#11
 
 $files= Get-ChildItem -Recurse -File
-$files | Where-Object - { $_.Extension -creplace '.csv', '.log'}
-Get-
+$files | Rename-Item -NewName { $_.Name -replace '.csv', '.log'}
+Get-ChildItem -Recurse -File
