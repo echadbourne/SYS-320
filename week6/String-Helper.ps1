@@ -27,3 +27,28 @@ for($j=0; $j -lt $splitted.Count; $j++){
 
 return $allines
 }
+
+<#*******************************************
+Check Password for requirements
+********************************************#>
+
+function checkPassword($passwd){
+
+    write-host $passwd
+    if($passwd.Length -lt 6){
+        Write-Host "Failed Length Test" | Out-String
+        return $false
+        }
+    elseif($passwd -inotlike '*[0-9]*'){
+        Write-Host "Digit-Test Failed" | Out-String
+        return $false
+        }
+    elseif($passwd -inotlike '*[^a-zA-Z0-0]*'){
+        Write-Host "Failed Special Character Test" | Out-String
+        return $false
+        }
+  else{
+  Write-Host "Here"
+  return $true }
+}
+        
