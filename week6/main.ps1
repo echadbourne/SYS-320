@@ -4,6 +4,7 @@
 clear
 
 $Prompt  = "Please choose your operation:`n"
+$Prompt += "0 - Exit`n"
 $Prompt += "1 - List Enabled Users`n"
 $Prompt += "2 - List Disabled Users`n"
 $Prompt += "3 - Create a User`n"
@@ -12,7 +13,7 @@ $Prompt += "5 - Enable a User`n"
 $Prompt += "6 - Disable a User`n"
 $Prompt += "7 - Get Log-In Logs`n"
 $Prompt += "8 - Get Failed Log-In Logs`n"
-$Prompt += "9 - Exit`n"
+$Prompt += "9 - Display at Risk Users `n"
 
 
 
@@ -25,7 +26,7 @@ while($operation){
     $choice = Read-Host 
 
 
-    if($choice -eq 9){
+    if($choice -eq 0){
         Write-Host "Goodbye" | Out-String
         exit
         $operation = $false 
@@ -156,14 +157,17 @@ while($operation){
         else{ Write-Host "User does not exist"}
     }
 
-
-    # TODO: Create another choice "List at Risk Users" that
-    #              - Lists all the users with more than 10 failed logins in the last <User Given> days.  
-    #                (You might need to create some failed logins to test)
-    #              - Do not forget to update prompt and option numbers
+    elseif($choice -eq 9){
     
-    # TODO: If user enters anything other than listed choices, e.g. a number that is not in the menu   
-    #       or a character that should not be accepted. Give a proper message to the user and prompt again.
+        $timeSince = Read-Host -Prompt "Please enter the number of days to search back"
+        $users = atRiskUsers($timeSince)
+        Write-Host ($users | Group-Object User | Where-Object {$_.count -ge 9} | select count, name | Format-Table | Out-String)
+    
+    }
+
+    else{
+        Write-Host "Please enter a valid option"
+    }
     
 
 }

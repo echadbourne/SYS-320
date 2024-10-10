@@ -64,3 +64,38 @@ function getFailedLogins($timeBack){
 
     return $failedloginsTable
 } # End of function getFailedLogins
+
+function atRiskUsers($timeBack){
+  
+  $failedlogins = Get-EventLog security -After (Get-Date).AddDays("-"+"$timeBack") | Where { $_.InstanceID -eq "4625" }
+
+  $failedloginsTable = @()
+  for($i=0; $i -lt $failedlogins.Count; $i++){
+
+    $account=""
+    $domain="" 
+
+    $usrlines = getMatchingLines $failedlogins[$i].Message "*Account Name*"
+    $usr = $usrlines[1].Split(":")[1].trim()
+
+    $dmnlines = getMatchingLines $failedlogins[$i].Message "*Account Domain*"
+    $dmn = $dmnlines[1].Split(":")[1].trim()
+
+    $user = $dmn+"\"+$usr;
+
+    $failedloginsTable += [pscustomobject]@{"Time" = $failedlogins[$i].TimeGenerated; `
+                                       "Id" = $failedlogins[$i].InstanceId; `
+                                    "Event" = "Failed"; `
+                                     "User" = $user;
+                                     }
+
+    }
+    #count the number of failed logins
+    #return the table where the number of failed logins is greater than 9
+    #$failcount = $failedloginsTable | Group User
+    #$failcount | Where-Object {$_.Count -gt 9 | Select-Object Name, Count
+    
+    return $failedloginsTable 
+    
+}
+}
